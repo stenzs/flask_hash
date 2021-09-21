@@ -8,6 +8,12 @@ app = Flask(__name__)
 CORS(app)
 
 
+@app.route('/', methods=['GET'])
+def test():
+    if request.method == 'GET':
+        return jsonify({'message': 'success, redis'})
+
+
 @app.route('/cache/<x>', methods=['POST', 'GET'])
 def post(x):
     if request.method == 'POST':
