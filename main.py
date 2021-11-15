@@ -32,8 +32,9 @@ def post(x):
         except Exception as e:
             return jsonify({'message': 'error', 'error': e})
         if (r.get(x)) != None:
-            pre_data = ((r.get(x)).decode("utf-8")).replace("'", "\"")
-            data = json.loads(pre_data)
+            # pre_data = ((r.get(x)).decode("utf-8")).replace("'", "\"")
+            # data = json.loads(pre_data)
+            data = r.get(x)
             return jsonify({'post_id': x, 'data': data})
         else:
             return jsonify({'post_id': x, 'data': None})
