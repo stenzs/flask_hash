@@ -3,7 +3,7 @@ from flask_cors import CORS
 import json
 import redis
 
-r = redis.StrictRedis(host='192.168.8.111', port=6379, db=2)
+r = redis.StrictRedis(host='192.168.145.195', port=6379, db=2)
 app = Flask(__name__)
 CORS(app)
 
@@ -17,10 +17,12 @@ def test():
 @app.route('/cache/<x>', methods=['POST', 'GET'])
 def post(x):
     if request.method == 'POST':
+        data = request.get_json()
+        seconds = 90
         redis_key = x
-        data = str((request.get_json())['data'])
+        value = str(data['data'])
         try:
-            r.setex(redis_key, 43200*60, data)
+            r.setex(redis_key, seconds, value)
         except Exception as e:
             return jsonify({'message': 'error', 'error': e})
         return jsonify({'message': 'success'})
