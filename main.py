@@ -27,7 +27,7 @@ def cache(x):
             r.setex(redis_key, seconds, value)
         except Exception as e:
             return jsonify({'message': 'error', 'error': e})
-        return jsonify({'message': 'success'})
+        return jsonify({'message': 'success', 'time_limit': seconds})
 
 
 @app.route('/check_phone_cleex/<x>', methods=['POST'])
@@ -81,7 +81,7 @@ def cache(x):
             r.setex(redis_key, seconds, value)
         except Exception as e:
             return jsonify({'message': 'error', 'error': e})
-        return jsonify({'message': 'success'})
+        return jsonify({'message': 'success', 'time_limit': seconds})
 
 
 @app.route('/check_phone_kvik/<x>', methods=['POST'])
