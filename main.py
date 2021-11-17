@@ -13,12 +13,12 @@ def test():
         return jsonify({'message': 'success, redis'})
 
 
-@app.route('/cache_phone/<x>', methods=['POST'])
+@app.route('/cache_phone_cleex/<x>', methods=['POST'])
 def cache(x):
     if request.method == 'POST':
         data = request.get_json()
         seconds = 90
-        redis_key = x
+        redis_key = str(x) + 'cleex'
         value = str(data['data'])
         secret = str(data['secret'])
         if secret != 'saf3535gasg':
@@ -40,7 +40,7 @@ def cache(x):
     #         return jsonify({'post_id': x, 'data': None})
 
 
-@app.route('/check_phone/<x>', methods=['POST'])
+@app.route('/check_phone_cleex/<x>', methods=['POST'])
 def check(x):
     if request.method == 'POST':
         data = request.get_json()
@@ -50,7 +50,7 @@ def check(x):
             return jsonify({'message': 'error'})
         seconds = 90
         try:
-            count = (r.get(str('count') + str(x)))
+            count = (r.get(str('count_cleex') + str(x)))
         except Exception as e:
             return jsonify({'message': 'error', 'error': e})
         if count != None:
@@ -58,17 +58,17 @@ def check(x):
         else:
             count = 0
         try:
-            r.setex(str('count') + str(x), seconds, int(count) + 1)
+            r.setex(str('count_cleex') + str(x), seconds, int(count) + 1)
         except Exception as e:
             return jsonify({'message': 'error', 'error': e})
         if int(count) >= 3:
             return jsonify({'message': 'time error'})
         try:
-            (r.get(x))
+            (r.get(str(x) + 'cleex'))
         except Exception as e:
             return jsonify({'message': 'error', 'error': e})
-        if (r.get(x)) != None:
-            data = (r.get(x)).decode("utf-8")
+        if (r.get(str(x) + 'cleex')) != None:
+            data = (r.get(str(x) + 'cleex')).decode("utf-8")
             if str(data) == str(value):
                 return jsonify({'check': True})
             else:
