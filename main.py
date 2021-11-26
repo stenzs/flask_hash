@@ -14,7 +14,7 @@ def test():
 
 
 @app.route('/cache_phone_cleex/<x>', methods=['POST'])
-def cache(x):
+def cache_cleex(x):
     if request.method == 'POST':
         data = request.get_json()
         seconds = 90
@@ -31,7 +31,7 @@ def cache(x):
 
 
 @app.route('/check_phone_cleex/<x>', methods=['POST'])
-def check(x):
+def check_cleex(x):
     if request.method == 'POST':
         data = request.get_json()
         value = str(data['data'])
@@ -68,7 +68,7 @@ def check(x):
 
 
 @app.route('/cache_phone_kvik/<x>', methods=['POST'])
-def cache(x):
+def cache_kvik(x):
     if request.method == 'POST':
         data = request.get_json()
         seconds = 90
@@ -85,7 +85,7 @@ def cache(x):
 
 
 @app.route('/check_phone_kvik/<x>', methods=['POST'])
-def check(x):
+def check_kvik(x):
     if request.method == 'POST':
         data = request.get_json()
         value = str(data['data'])
