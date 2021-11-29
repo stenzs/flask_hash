@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from datetime import datetime
 import redis
 
 r = redis.StrictRedis(host='192.168.145.195', port=6379, db=2)
@@ -128,7 +129,10 @@ def count_payout_cleex(x):
         secret = str(data['secret'])
         if secret != 'saf3535gasg':
             return jsonify({'message': 'error'})
-        seconds = 60*60*24
+
+        now = datetime.now()
+        seconds_since_midnight = int((now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds())
+        seconds_until_midnight = 60 * 60 * 24 - int(seconds_since_midnight)
         try:
             count = (r.get(str('cleex_card') + str(x)))
         except Exception as e:
@@ -140,7 +144,7 @@ def count_payout_cleex(x):
         if int(count) >= 20:
             return jsonify({'message': 'to mach'})
         try:
-            r.setex(str('cleex_card') + str(x), seconds, int(count) + 1)
+            r.setex(str('cleex_card') + str(x), seconds_until_midnight, int(count) + 1)
         except Exception as e:
             return jsonify({'message': 'error', 'error': e})
         return jsonify({'message': 'success'})
@@ -149,13 +153,11 @@ def count_payout_cleex(x):
 @app.route('/time_test', methods=['GET'])
 def time_test():
     if request.method == 'GET':
-        from datetime import datetime
         now = datetime.now()
         seconds_since_midnight = int((now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds())
         seconds_until_midnight = 60*60*24 - int(seconds_since_midnight)
-        print(seconds_until_midnight)
-        print(int(seconds_since_midnight))
-        return jsonify({'message': 'success', 'seconds_since': seconds_since_midnight, 'seconds_untill': seconds_until_midnight})
+        return jsonify({'message': 'success', 'seconds_since': seconds_since_midnight,
+                        'seconds_until': seconds_until_midnight})
 
 
 @app.route('/get_count_payout_cleex', methods=['GET', 'POST'])
