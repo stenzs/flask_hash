@@ -121,5 +121,56 @@ def check_kvik(x):
             return jsonify({'check': False})
 
 
+@app.route('/count_payout_cleex/<x>', methods=['POST'])
+def count_payout_cleex(x):
+    if request.method == 'POST':
+        data = request.get_json()
+        secret = str(data['secret'])
+        if secret != 'saf3535gasg':
+            return jsonify({'message': 'error'})
+        seconds = 60*60*24
+        try:
+            count = (r.get(str('cleex_card') + str(x)))
+        except Exception as e:
+            return jsonify({'message': 'error', 'error': e})
+        if count is not None:
+            count = count.decode("utf-8")
+        else:
+            count = 0
+        if int(count) >= 20:
+            return jsonify({'message': 'to mach'})
+        try:
+            r.setex(str('cleex_card') + str(x), seconds, int(count) + 1)
+        except Exception as e:
+            return jsonify({'message': 'error', 'error': e})
+        return jsonify({'message': 'success'})
+
+
+@app.route('/get_count_payout_cleex', methods=['GET', 'POST'])
+def get_count_payout_cleex():
+    if request.method == 'POST':
+        data = request.get_json()
+        try:
+            secret = str(data['secret'])
+            cards = data['cards']
+        except Exception:
+            return jsonify({'message': 'invalid data'})
+        count_data = []
+        for card in cards:
+            try:
+                count = (r.get(str('cleex_card') + str(card['bank_id'])))
+            except Exception as e:
+                return jsonify({'message': 'error', 'error': e})
+            if count is not None:
+                count = count.decode("utf-8")
+            else:
+                count = 0
+            card['count'] = int(count)
+            count_data.append(card)
+        if secret != 'saf3535gasg':
+            return jsonify({'message': 'error'})
+        return jsonify({'message': 'success', 'cards': cards})
+
+
 if __name__ == '__main__':
     app.run()
