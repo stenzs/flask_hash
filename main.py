@@ -146,6 +146,18 @@ def count_payout_cleex(x):
         return jsonify({'message': 'success'})
 
 
+@app.route('/time_test', methods=['GET'])
+def time_test():
+    if request.method == 'GET':
+        from datetime import datetime
+        now = datetime.now()
+        seconds_since_midnight = int((now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds())
+        seconds_until_midnight = 60*60*24 - int(seconds_since_midnight)
+        print(seconds_until_midnight)
+        print(int(seconds_since_midnight))
+        return jsonify({'message': 'success', 'seconds_since': seconds_since_midnight, 'seconds_untill': seconds_until_midnight})
+
+
 @app.route('/get_count_payout_cleex', methods=['GET', 'POST'])
 def get_count_payout_cleex():
     if request.method == 'POST':
